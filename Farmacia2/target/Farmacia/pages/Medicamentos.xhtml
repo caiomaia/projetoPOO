@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/Template.xhtml">
+
+
+	<ui:define name="pagina">
+
+	<h:form id="formListagem">
+
+		<p:panel header="Listagem de Medicamentos">
+			<p:dataTable  id="tabela"  emptyMessage="Nenhum registro encontrado"
+				pagenator="true" var="medicamento" value="#{medicamentoBean.medicamentos}" >
+				<f:facet name="footer">
+					<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+						actionListener="#{medicamentoBean.novo}" update=":formCadastro:painel">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						 </p:commandButton>
+				</f:facet>
+				<p:column headerText="Nome" sortBy="#{medicamento.nome}" filterBy="#{medicamento.nome}">
+				<h:outputText value="#{medicamento.nome}"/>
+				</p:column>
+				<p:column headerText="Fabricante">
+				<h:outputText value="#{medicamento.fabricante}"/>
+				</p:column>
+				<p:column headerText="Unidade">
+				<h:outputText value="#{medicamento.unidade}"/>
+				</p:column>
+				<p:column headerText="Validade">
+				<h:outputText value="#{medicamento.data}"/>
+				</p:column>
+				<p:column headerText="ValorUn">
+				<h:outputText value="#{medicamento.precoUnitario}"/>
+				</p:column>
+			<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{medicamentoBean.excluir}"
+						update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação" message="Deseja excluir o estado?"
+							icon="ui-icon-alert" />
+						<f:attribute name="medicamentoSelecionado" value="#{medicamento}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{medicamentoBean.editar}"
+						update=":formCadastro:painel" oncomplete="PF('dialogo').show();">
+						<f:attribute name="medicamentoSelecionado" value="#{medicamento}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		
+		</p:panel>
+	</h:form>
+	<p:dialog header="Cadastro Medicamento" widgetVar="dialogo"
+		draggable="false" resizable="false" modal="true" closable="false">
+
+		<h:form id="formCadastro">
+			<h:panelGrid id="painel" columns="2">
+				<p:outputLabel value="Nome: " />
+				<p:inputText maxlength="50" size="30" required="true" 
+				value="#{medicamentoBean.medicamento.nome}" />
+
+				<p:outputLabel value="Fabricante: " />
+				<p:inputText maxlength="50" size="30" required="true" value="#{medicamentoBean.medicamento.fabricante}"/>
+
+				<p:outputLabel value="Unidade: " />
+				<p:inputText maxlength="10" size="30" required="true" value="#{medicamentoBean.medicamento.unidade}"/>
+
+				<p:outputLabel value="PreçoUn: " />
+				<p:inputText maxlength="10" size="30" 
+				required="true" converterMessage="Informe um valor válido"
+				value="#{medicamentoBean.medicamento.precoUnitario}"/>
+
+				<p:outputLabel value="Validade: " />
+				<p:calendar required="true" value="#{medicamentoBean.medicamento.data}">
+					
+				</p:calendar>
+
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2">
+				<p:commandButton value="Salvar" actionListener="#{medicamentoBean.salvar()}" update=":mensagem :formCadastro:painel :formListagem:tabela"/>
+				<p:commandButton value="Cancelar" oncomplete="PF('dialogo').hide();" />
+			</h:panelGrid>
+
+
+
+		</h:form>
+
+	</p:dialog>
+</ui:define>
+</ui:composition>
